@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<style>
+    /* GENEL TASARIM VE RESET */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+        background-color: #191919; /* Notion Dark Mode uyumlu */
+        color: #e0e0e0;
+        display: flex;
+        justify_content: center;
+        align-items: center;
+        height: 100vh;
+        padding: 20px;
+    }
+
+    /* KAPSAYICI KUTU */
+    .calculator-card {
+        background-color: #202020;
+        width: 100%;
+        max-width: 400px;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        border: 1px solid #333;
+    }
+
+    h2 {
+        font-size: 18px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #888;
+        margin-bottom: 25px;
+        text-align: center;
+        border-bottom: 1px solid #333;
+        padding-bottom: 10px;
+    }
+
+    /* FORM ELEMANLARI */
+    .input-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 5px;
+        letter-spacing: 0.5px;
+    }
+
+    select, input {
+        width: 100%;
+        background-color: #2d2d2d;
+        border: 1px solid #333;
+        color: #fff;
+        padding: 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: 0.3s;
+        outline: none;
+    }
+
+    select:focus, input:focus {
+        border-color: #4ea8de; /* Hafif Mavi Odak */
+        background-color: #333;
+    }
+
+    /* HESAPLA BUTONU */
+    button {
+        width: 100%;
+        padding: 14px;
+        margin-top: 10px;
+        background: linear-gradient(90deg, #4ea8de, #5e60ce);
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: opacity 0.3s;
+    }
+
+    button:hover {
+        opacity: 0.9;
+    }
+
+    /* SONUÇ ALANI */
+    .result-box {
+        margin-top: 25px;
+        text-align: center;
+        padding: 20px;
+        background-color: #1a1a1a;
+        border-radius: 8px;
+        border: 1px dashed #444;
+        position: relative;
+    }
+
+    .result-label {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+    }
+
+    .result-value {
+        font-size: 36px;
+        font-weight: 700;
+        color: #fff;
+        margin: 5px 0;
+        text-shadow: 0 0 10px rgba(255,255,255,0.1);
+    }
+
+    .trade-direction {
+        font-size: 11px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        display: inline-block;
+        font-weight: bold;
+        opacity: 0; /* Başlangıçta gizli */
+        transition: opacity 0.3s;
+    }
+
+    .long { color: #2ecc71; background: rgba(46, 204, 113, 0.1); opacity: 1; }
+    .short { color: #e74c3c; background: rgba(231, 76, 60, 0.1); opacity: 1; }
+
+</style>
+</head>
+<body>
+
+<div class="calculator-card">
+    <h2>Position Size Calc</h2>
+
+    <div class="input-group">
+        <label>PARİTE / SEMBOL</label>
+        <select id="parity">
+            <option value="forex">EURUSD / GBPUSD (Forex)</option>
+            <option value="gold">XAUUSD (GOLD)</option>
+            <option value="silver">XAGUSD (SILVER)</option>
+        </select>
+    </div>
+
+    <div class="input-group">
+        <label>RİSK TUTARI ($)</label>
+        <input type="number" id="risk" placeholder="Örn: 50" step="any">
+    </div>
+
+    <div style="display: flex; gap: 10px;">
+        <div class="input-group" style="flex: 1;">
+            <label>GİRİŞ (ENTRY)</label>
+            <input type="number" id="entry" placeholder="Fiyat" step="any">
+        </div>
+        <div class="input-group" style="flex: 1;">
+            <label>STOP LOSS</label>
+            <input type="number" id="stop" placeholder="Fiyat" step="any">
+        </div>
+    </div>
+
+    <button onclick="calculateLot()">HESAPLA</button>
+
+    <div class="result-box">
+        <div class="result-label">AÇILMASI GEREKEN LOT</div>
+        <div class="result-value" id="result">0.00</div>
+        <div id="direction" class="trade-direction">YÖN BEKLENİYOR</div>
+    </div>
+</div>
+
+<script>
+    function calculateLot() {
+        // Değerleri Al
+        const parityType = document.getElementById('parity').value;
+        const risk = parseFloat(document.getElementById('risk').value);
+        const entry = parseFloat(document.getElementById('entry').value);
+        const stop = parseFloat(document.getElementById('stop').value);
+
+        // Hata Kontrolü
+        if (isNaN(risk) || isNaN(entry) || isNaN(stop) || entry === stop) {
+            alert("Lütfen tüm alanları doğru doldurun ve Giriş/Stop fiyatlarını farklı girin.");
+            return;
+        }
+
+        // Sözleşme Büyüklüğü (Contract Size) Belirleme
+        let contractSize = 100000; // Varsayılan Forex
+        if (parityType === 'gold') contractSize = 100;
+        if (parityType === 'silver') contractSize = 5000;
+
+        // Hesaplama: Risk / (Fiyat Farkı * Sözleşme Büyüklüğü)
+        const priceDiff = Math.abs(entry - stop);
+        const lotSize = risk / (priceDiff * contractSize);
+
+        // Sonucu Yazdır (2 basamak)
+        document.getElementById('result').innerText = lotSize.toFixed(2) + " Lot";
+
+        // Yön Belirleme (Görsel Efekt)
+        const directionBadge = document.getElementById('direction');
+        if (entry > stop) {
+            // Entry Stop'tan büyükse LONG işlemidir (Stop aşağıdadır)
+            directionBadge.innerText = "LONG (BUY)";
+            directionBadge.className = "trade-direction long";
+        } else {
+            // Entry Stop'tan küçükse SHORT işlemidir (Stop yukarıdadır)
+            directionBadge.innerText = "SHORT (SELL)";
+            directionBadge.className = "trade-direction short";
+        }
+    }
+</script>
+
+</body>
+</html>
