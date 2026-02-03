@@ -118,10 +118,10 @@
         }
 
         /* Mat Renk Paleti */
-        .bar-sydney.bar-active { background: #CFA700; } /* Mat Altın */
-        .bar-tokyo.bar-active { background: #008C99; }  /* Mat Cam Göbeği */
-        .bar-london.bar-active { background: #1E4F9F; } /* Mat Koyu Mavi */
-        .bar-newyork.bar-active { background: #D65A00; } /* Mat Yanık Turuncu */
+        .bar-sydney.bar-active { background: #8D6E63; color: #fff; } 
+        .bar-tokyo.bar-active { background: #546E7A; color: #fff; }  
+        .bar-london.bar-active { background: #1565C0; color: #fff; } 
+        .bar-newyork.bar-active { background: #D84315; color: #fff; }
 
         .cursor {
             position: absolute; top: 0; bottom: 0; width: 1px;
@@ -145,10 +145,10 @@
         .card.active .status-dot { background: #089981; box-shadow: 0 0 5px #089981; }
         
         /* Kart Kenar Renkleri (Mat) */
-        .card.active.sydney { border-left-color: #CFA700; }
-        .card.active.tokyo { border-left-color: #008C99; }
-        .card.active.london { border-left-color: #1E4F9F; }
-        .card.active.newyork { border-left-color: #D65A00; }
+        .card.active.sydney { border-left-color: #8D6E63; }
+        .card.active.tokyo { border-left-color: #546E7A; }
+        .card.active.london { border-left-color: #1565C0; }
+        .card.active.newyork { border-left-color: #D84315; }
 
         .text-green { color: #089981; }
         .text-red { color: #f23645; }
@@ -162,24 +162,25 @@
     <div class="header">
         <div id="dynamic-badge" class="market-badge badge-closed">
             <div class="live-dot"></div>
-            <span id="badge-text">PİYASALAR KAPALI</span>
+            <span id="badge-text">MARKET KAPALI</span>
         </div>
         <div class="live-clock" id="clock">00:00:00</div>
     </div>
 
     <div class="timeline-container">
         <div class="grid-lines">
-            <div class="grid-section"></div> 
+            <div class="grid-section"></div>
+            <div class="grid-section"><div class="grid-label">08:00</div></div> 
             <div class="grid-section"><div class="grid-label">12:00</div></div> 
-            <div class="grid-section"><div class="grid-label">18:00</div></div> 
-            <div class="grid-section"><div class="grid-label">24:00</div></div> 
+            <div class="grid-section"><div class="grid-label">16:00</div></div> 
+            <div class="grid-section"><div class="grid-label">20:00</div></div> 
         </div>
 
         <div class="track-wrapper">
-            <div id="bar-sydney" class="session-bar bar-sydney" style="left: 4.16%; width: 37.5%;">SYD</div>
-            <div id="bar-tokyo" class="session-bar bar-tokyo" style="left: 12.5%; width: 37.5%; top: 28px;">TOK</div>
-            <div id="bar-london" class="session-bar bar-london" style="left: 41.66%; width: 37.5%; top: 56px;">LONDRA</div>
-            <div id="bar-newyork" class="session-bar bar-newyork" style="left: 66.66%; width: 33.33%; top: 84px;">NY</div>
+            <div id="bar-sydney" class="session-bar bar-sydney" style="left: 4.16%; width: 37.5%;">SYDNEY</div>
+            <div id="bar-tokyo" class="session-bar bar-tokyo" style="left: 12.5%; width: 37.5%; top: 28px;">TOKYO</div>
+            <div id="bar-london" class="session-bar bar-london" style="left: 41.66%; width: 37.5%; top: 56px;">LONDON</div>
+            <div id="bar-newyork" class="session-bar bar-newyork" style="left: 66.66%; width: 33.33%; top: 84px;">NEW YORK</div>
         </div>
 
         <div class="cursor" id="cursor"></div>
