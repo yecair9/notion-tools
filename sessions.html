@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { margin: 0; padding: 10px; background-color: #191919; color: #d1d4dc; font-family: sans-serif; }
+        .session-card { background: #242424; border-radius: 8px; padding: 10px; margin-bottom: 8px; border-left: 4px solid #363c4e; display: flex; justify-content: space-between; align-items: center; }
+        .open { border-left-color: #089981 !important; color: #089981; }
+        .overlap { border-left-color: #2962ff !important; box-shadow: 0 0 8px #2962ff44; }
+        .clock { text-align: center; font-size: 18px; color: #2962ff; margin-bottom: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="clock" id="clock">00:00:00</div>
+    <div id="content"></div>
+    <script>
+        const sessions = [
+            { name: "SYDNEY", start: 2, end: 11 }, { name: "TOKYO", start: 3, end: 12 },
+            { name: "LONDRA", start: 10, end: 19 }, { name: "NEW YORK", start: 16, end: 1 }
+        ];
+        function update() {
+            const now = new Date();
+            const h = now.getHours();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('tr-TR');
+            document.getElementById('content').innerHTML = sessions.map(s => {
+                const isOpen = s.start < s.end ? (h >= s.start && h < s.end) : (h >= s.start || h < s.end);
+                const isOverlap = (s.name === "LONDRA" || s.name === "NEW YORK") && (h >= 16 && h < 19);
+                return `<div class="session-card ${isOpen ? 'open' : ''} ${isOverlap ? 'overlap' : ''}">
+                    <span>${s.name}</span><span>${isOpen ? 'AÇIK' : 'KAPALI'}</span>
+                </div>`;
+            }).join('');
+        }
+        setInterval(update, 1000); update();
+    </script>
+</body>
+</html>
