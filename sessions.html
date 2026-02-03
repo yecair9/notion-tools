@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sessions Custom Grid</title>
+    <title>Centered Time Grid</title>
     <style>
         /* TEMEL AYARLAR */
         * { box-sizing: border-box; }
@@ -45,23 +45,30 @@
             border: 1px solid #2a2e39; overflow: hidden;
         }
 
-        /* IZGARA ÇİZGİLERİ (GÜNCELLENDİ) */
+        /* IZGARA ÇİZGİLERİ */
         .grid-lines {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; /* Tıklamayı engelle */
+            pointer-events: none;
         }
 
-        /* Yeni Özel Izgara Çizgisi */
         .custom-grid-line {
             position: absolute;
             top: 0; bottom: 0;
-            width: 1px;
+            width: 1px; /* Çizgi genişliği referansı */
             border-right: 1px dashed #363c4e;
         }
 
+        /* SAAT ETİKETLERİ (ORTALAMA AYARI BURADA) */
         .grid-label {
-            position: absolute; bottom: 4px; left: 4px; /* Çizginin hemen sağına */
-            font-size: 10px; color: #666; font-weight: 600;
+            position: absolute; 
+            bottom: 4px; 
+            left: 50%; /* Çizginin tam ortasına gel */
+            transform: translateX(-50%); /* Yazının kendi genişliğinin yarısı kadar geri git (Tam ortala) */
+            font-size: 10px; 
+            color: #666; 
+            font-weight: 600;
+            background-color: #202020; /* Çizginin üzerine binmemesi için arka plan rengi (Opsiyonel) */
+            padding: 0 4px; /* Yazı etrafına az boşluk */
         }
 
         /* SEANS BARLARI */
@@ -74,7 +81,6 @@
         }
         .bar-active { opacity: 1; height: 22px; z-index: 5; color: #fff; border: none; }
         
-        /* Renkler */
         .bar-sydney.bar-active { background: #8D6E63; color: #fff; } 
         .bar-tokyo.bar-active { background: #546E7A; color: #fff; }  
         .bar-london.bar-active { background: #1565C0; color: #fff; } 
