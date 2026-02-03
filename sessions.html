@@ -3,199 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Market Sessions</title>
+    <title>Pro Sessions Dashboard</title>
     <style>
-        /* TEMEL AYARLAR */
+        /* GENEL AYARLAR */
         body {
             margin: 0;
-            padding: 16px;
+            padding: 20px;
             background-color: #191919;
-            color: #e0e0e0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #ffffff;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             overflow: hidden;
+            user-select: none;
         }
 
-        /* HEADER & VOLATİLİTE UYARISI */
+        /* HEADER & SAAT */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
         }
-        .clock {
-            font-size: 24px;
-            font-weight: 800;
-            color: #ffffff;
-            letter-spacing: 1px;
-        }
-        .volatility-badge {
-            font-size: 11px;
-            font-weight: bold;
-            padding: 6px 12px;
-            border-radius: 20px;
-            background: #2a2e39;
+        .app-title {
+            font-size: 14px;
+            font-weight: 700;
             color: #888;
+            letter-spacing: 1px;
             text-transform: uppercase;
-            transition: all 0.5s ease;
         }
-        .volatility-high {
-            background: rgba(242, 54, 69, 0.2);
-            color: #f23645;
-            border: 1px solid #f23645;
-            animation: pulse 2s infinite;
+        .live-clock {
+            font-size: 26px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 0.5px;
+            font-variant-numeric: tabular-nums;
         }
 
-        /* GÖRSEL ZAMAN ÇİZELGESİ (TIMELINE) */
+        /* TIMELINE (Grafiksel Alan) */
         .timeline-container {
             position: relative;
-            height: 40px;
-            background: #242424;
-            border-radius: 8px;
-            margin-bottom: 25px;
+            height: 120px; /* Grafik Yüksekliği */
+            background: #202020;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
             overflow: hidden;
-            border: 1px solid #363c4e;
         }
-        .timeline-bar {
+        
+        /* Izgara Çizgileri */
+        .grid-lines {
+            position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+            display: flex; justify-content: space-between; padding: 0 2%; box-sizing: border-box; pointer-events: none;
+        }
+        .grid-line {
+            width: 1px; height: 100%; background: rgba(255,255,255,0.05); position: relative;
+        }
+        .grid-label {
+            position: absolute; bottom: 5px; left: 4px; font-size: 10px; color: #555;
+        }
+
+        /* Seans Çubukları (Timeline Tracks) */
+        .track-container {
+            position: relative; width: 100%; height: 100%; top: 10px;
+        }
+        .session-track {
             position: absolute;
-            top: 10px;
-            left: 0;
-            width: 100%;
-            height: 20px;
-            display: flex;
-        }
-        .session-block {
-            height: 100%;
-            opacity: 0.3;
-            font-size: 9px;
+            height: 16px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            color: rgba(255,255,255,0.8);
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            white-space: nowrap;
-            overflow: hidden;
+            padding-left: 8px;
+            opacity: 0.3; /* Pasifken soluk */
+            transition: all 0.4s ease;
         }
-        /* İMLEÇ (Current Time Marker) */
-        .current-time-marker {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: #2962ff;
-            box-shadow: 0 0 10px #2962ff;
+        .track-active {
+            opacity: 1;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            z-index: 2;
+        }
+
+        /* İmleç (Current Time) */
+        .cursor {
+            position: absolute; top: 0; bottom: 0; width: 2px;
+            background: #fff;
+            box-shadow: 0 0 8px rgba(255,255,255,0.8);
             z-index: 10;
             transition: left 1s linear;
         }
-        .marker-label {
-            position: absolute;
-            top: -12px;
-            left: -15px;
-            font-size: 9px;
-            background: #2962ff;
-            color: white;
-            padding: 2px 4px;
-            border-radius: 4px;
+        .cursor::after {
+            content: ''; position: absolute; top: 0; left: -4px;
+            width: 10px; height: 10px; background: #fff; border-radius: 50%;
         }
 
-        /* SEANS KARTLARI */
-        .sessions-grid {
+        /* KARTLAR (Grid Yapısı - Senin Sevdiğin Kısım) */
+        .cards-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* Yan yana 2 kolon */
-            gap: 10px;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
-        
-        .session-card {
-            background: #242424;
+
+        .card {
+            background: #252525;
             border-radius: 12px;
             padding: 15px;
             position: relative;
-            border-left: 4px solid #444;
+            border-left: 4px solid #444; /* Varsayılan gri çizgi */
             transition: all 0.3s ease;
-        }
-        
-        .active-card {
-            background: #2a2e39;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            border-left-width: 4px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 80px;
         }
 
-        .session-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 5px;
+        /* Kart İçeriği */
+        .card-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;
         }
-        .session-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #d1d4dc;
+        .city-name {
+            font-size: 14px; font-weight: 800; color: #e0e0e0; letter-spacing: 0.5px;
         }
         .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #444;
+            width: 8px; height: 8px; border-radius: 50%; background: #444; box-shadow: inset 0 0 2px rgba(0,0,0,0.5);
         }
-        .active-card .status-dot {
-            background: #00ff00;
+        
+        .time-range {
+            font-size: 11px; color: #777; font-weight: 500; margin-bottom: 8px;
+        }
+        
+        .countdown {
+            font-size: 12px; font-weight: 600;
+        }
+        
+        /* Aktif Durum Stilleri */
+        .card.active {
+            background: #2a2e39;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .card.active .status-dot {
+            background: #00ff00; /* Parlak Yeşil */
             box-shadow: 0 0 8px #00ff00;
         }
 
-        .time-range {
-            font-size: 11px;
-            color: #787b86;
-        }
-        .countdown {
-            font-size: 11px;
-            font-weight: 600;
-            margin-top: 8px;
-            color: #b2b5be;
-        }
-        .active-text { color: #089981; } /* Yeşil */
-        .closed-text { color: #f23645; } /* Kırmızı */
+        /* Renk Temaları */
+        .theme-sydney { --color: #E0BB20; }
+        .theme-tokyo { --color: #00E5FF; }
+        .theme-london { --color: #2979FF; }
+        .theme-newyork { --color: #FF9100; }
 
-        /* RENKLER */
-        .sydney-color { background: #E0BB20; }
-        .tokyo-color { background: #20E0E0; }
-        .london-color { background: #2962FF; }
-        .newyork-color { background: #FF9800; }
-        
-        @keyframes pulse {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.05); }
-            100% { opacity: 1; transform: scale(1); }
-        }
+        .active.theme-sydney { border-left-color: var(--color); }
+        .active.theme-tokyo { border-left-color: var(--color); }
+        .active.theme-london { border-left-color: var(--color); }
+        .active.theme-newyork { border-left-color: var(--color); }
+
+        /* Yazı Renkleri */
+        .text-green { color: #00E676; }
+        .text-red { color: #FF5252; }
+
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="clock" id="clock-display">00:00:00</div>
-        <div class="volatility-badge" id="volatility-status">Düşük Hacim</div>
+        <div class="app-title">MARKET SESSIONS v2</div>
+        <div class="live-clock" id="clock">00:00:00</div>
     </div>
 
     <div class="timeline-container">
-        <div class="timeline-bar">
-            <div class="session-block sydney-color" style="width: 37%;">SYD</div>
-            <div class="session-block tokyo-color" style="width: 13%; margin-left: -25%;">TOK</div>
-            <div class="session-block london-color" style="width: 37%; margin-left: 8%;">LON</div>
-            <div class="session-block newyork-color" style="width: 37%; margin-left: -12%;">NY</div>
+        <div class="grid-lines">
+            <div class="grid-line" style="left:0%"><span class="grid-label">00:00</span></div>
+            <div class="grid-line" style="left:25%"><span class="grid-label">06:00</span></div>
+            <div class="grid-line" style="left:50%"><span class="grid-label">12:00</span></div>
+            <div class="grid-line" style="left:75%"><span class="grid-label">18:00</span></div>
+            <div class="grid-line" style="left:100%"></div>
         </div>
-        <div class="current-time-marker" id="timeline-marker">
-            <div class="marker-label">ŞİMDİ</div>
+
+        <div class="track-container">
+            <div id="track-sydney" class="session-track" style="background: #E0BB20; top: 10px; left: 4.16%; width: 37.5%;">SYDNEY</div>
+            
+            <div id="track-tokyo" class="session-track" style="background: #00E5FF; top: 35px; left: 12.5%; width: 37.5%; color: #000;">TOKYO</div>
+            
+            <div id="track-london" class="session-track" style="background: #2979FF; top: 60px; left: 41.66%; width: 37.5%;">LONDRA</div>
+            
+            <div id="track-newyork" class="session-track" style="background: #FF9100; top: 85px; left: 66.66%; width: 33.33%;">NEW YORK</div>
         </div>
+
+        <div class="cursor" id="cursor"></div>
     </div>
 
-    <div class="sessions-grid" id="cards-container">
+    <div class="cards-grid" id="cards-container">
         </div>
 
     <script>
-        // Türkiye Saati Bazlı Seans Ayarları
+        // Seans Verileri
         const sessions = [
-            { id: 'sydney', name: 'SYDNEY', start: 1, end: 10, color: '#E0BB20' }, // 01:00 - 10:00
-            { id: 'tokyo', name: 'TOKYO', start: 3, end: 12, color: '#20E0E0' },  // 03:00 - 12:00
-            { id: 'london', name: 'LONDRA', start: 10, end: 19, color: '#2962FF' }, // 10:00 - 19:00
-            { id: 'newyork', name: 'NEW YORK', start: 16, end: 1, color: '#FF9800' } // 16:00 - 01:00
+            { id: 'sydney', name: 'SYDNEY', start: 1, end: 10, theme: 'theme-sydney' },
+            { id: 'tokyo', name: 'TOKYO', start: 3, end: 12, theme: 'theme-tokyo' },
+            { id: 'london', name: 'LONDRA', start: 10, end: 19, theme: 'theme-london' },
+            { id: 'newyork', name: 'NEW YORK', start: 16, end: 1, theme: 'theme-newyork' }
         ];
 
         function updateDashboard() {
@@ -205,89 +213,77 @@
             const s = now.getSeconds();
             
             // 1. Saati Güncelle
-            document.getElementById('clock-display').innerText = 
-                `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            document.getElementById('clock').innerText = 
+                `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 
-            // 2. Timeline İmlecini Güncelle (Gün yüzdesi)
-            const totalMinutes = (h * 60) + m;
-            const percentage = (totalMinutes / 1440) * 100;
-            document.getElementById('timeline-marker').style.left = `${percentage}%`;
+            // 2. İmleç Pozisyonu
+            const totalMin = (h * 60) + m;
+            const percent = (totalMin / 1440) * 100;
+            document.getElementById('cursor').style.left = `${percent}%`;
 
-            // 3. Seans Kartlarını ve Durumlarını Oluştur/Güncelle
+            // 3. Kartları ve Timeline'ı Yönet
             const container = document.getElementById('cards-container');
-            container.innerHTML = ''; // Temizle ve yeniden oluştur
+            container.innerHTML = '';
 
-            let activeCount = 0;
-            let isLondonOpen = false;
-            let isNYOpen = false;
-
-            sessions.forEach(session => {
-                // Seans açık mı kontrolü (Gece geçişi dahil)
+            sessions.forEach(sess => {
+                // Açık mı?
                 let isOpen = false;
-                if (session.start < session.end) {
-                    isOpen = h >= session.start && h < session.end;
+                if (sess.start < sess.end) {
+                    isOpen = h >= sess.start && h < sess.end;
                 } else {
-                    isOpen = h >= session.start || h < session.end; // Gece yarısını geçen seans
+                    isOpen = h >= sess.start || h < sess.end;
                 }
 
-                if (isOpen) {
-                    activeCount++;
-                    if(session.id === 'london') isLondonOpen = true;
-                    if(session.id === 'newyork') isNYOpen = true;
-                }
-
-                // Geri sayım mantığı
-                let statusText = "";
-                let subClass = "closed-text";
-                if (isOpen) {
-                    let closeHour = session.end;
-                    let remainingH = closeHour - h - 1;
-                    let remainingM = 60 - m;
-                    if (remainingH < 0) remainingH += 24;
-                    statusText = `Kapanışa: ${remainingH}s ${remainingM}dk`;
-                    subClass = "active-text";
+                // Timeline Çubuğunu Parlat/Söndür
+                const track = document.getElementById(`track-${sess.id}`);
+                if(isOpen) {
+                    track.classList.add('track-active');
                 } else {
-                    let openHour = session.start;
-                    let waitH = openHour - h - 1;
-                    let waitM = 60 - m;
-                    if (waitH < 0) waitH += 24;
-                    statusText = `Açılışa: ${waitH}s ${waitM}dk`;
+                    track.classList.remove('track-active');
                 }
 
-                // Kart HTML'i
+                // Kart Metinleri ve Hesaplama
+                let countText = "";
+                let countClass = "";
+                
+                if (isOpen) {
+                    // Kapanışa ne kadar var?
+                    let target = sess.end;
+                    let diffH = target - h - 1;
+                    let diffM = 60 - m;
+                    if (diffH < 0) diffH += 24;
+                    
+                    countText = `Kapanışa: ${diffH}s ${diffM}dk`;
+                    countClass = "text-green";
+                } else {
+                    // Açılışa ne kadar var?
+                    let target = sess.start;
+                    let diffH = target - h - 1;
+                    let diffM = 60 - m;
+                    if (diffH < 0) diffH += 24;
+                    
+                    countText = `Açılışa: ${diffH}s ${diffM}dk`;
+                    countClass = "text-red";
+                }
+
+                // KART HTML OLUŞTURMA (Senin yapına uygun)
                 const card = document.createElement('div');
-                card.className = `session-card ${isOpen ? 'active-card' : ''}`;
-                card.style.borderLeftColor = isOpen ? session.color : '#444';
+                card.className = `card ${sess.theme} ${isOpen ? 'active' : ''}`;
                 
                 card.innerHTML = `
-                    <div class="session-header">
-                        <span class="session-title" style="color:${isOpen ? '#fff' : '#787b86'}">${session.name}</span>
+                    <div class="card-header">
+                        <span class="city-name">${sess.name}</span>
                         <div class="status-dot"></div>
                     </div>
-                    <div class="time-range">${String(session.start).padStart(2,'0')}:00 - ${String(session.end).padStart(2,'0')}:00</div>
-                    <div class="countdown ${subClass}">${statusText}</div>
+                    <div class="time-range">
+                        ${String(sess.start).padStart(2,'0')}:00 - ${String(sess.end).padStart(2,'0')}:00
+                    </div>
+                    <div class="countdown ${countClass}">
+                        ${countText}
+                    </div>
                 `;
                 container.appendChild(card);
             });
-
-            // 4. Volatilite Uyarısı (Overlap Kontrolü)
-            const volBadge = document.getElementById('volatility-status');
-            if (isLondonOpen && isNYOpen) {
-                volBadge.innerText = "🔥 YÜKSEK VOLATİLİTE (OVERLAP)";
-                volBadge.className = "volatility-badge volatility-high";
-            } else if (activeCount > 0) {
-                volBadge.innerText = "PİYASA AÇIK";
-                volBadge.className = "volatility-badge";
-                volBadge.style.color = "#089981";
-                volBadge.style.border = "1px solid #089981";
-                volBadge.style.background = "rgba(8, 153, 129, 0.1)";
-            } else {
-                volBadge.innerText = "DÜŞÜK HACİM / KAPALI";
-                volBadge.className = "volatility-badge";
-                volBadge.style.color = "#888";
-                volBadge.style.border = "1px solid #444";
-                volBadge.style.background = "#2a2e39";
-            }
         }
 
         setInterval(updateDashboard, 1000);
