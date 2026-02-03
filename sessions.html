@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Sessions Dashboard v4</title>
+    <title>Pro Sessions Dashboard v5 (Matte Finish)</title>
     <style>
-        /* GENEL AYARLAR */
+        /* GENEL AYARLAR - Profesyonel Karanlık Tema */
         body {
             margin: 0;
             padding: 20px;
-            background-color: #191919;
-            color: #ffffff;
-            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            background-color: #191919; /* Notion Koyu Gri */
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             overflow: hidden;
             user-select: none;
         }
@@ -22,61 +22,63 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
-            padding-bottom: 5px;
+            border-bottom: 1px solid #2a2e39;
+            padding-bottom: 10px;
         }
 
-        /* DİNAMİK PİYASA ROZETİ */
+        /* DİNAMİK PİYASA ROZETİ - Tek Tip Profesyonel Yeşil */
         .market-badge {
-            padding: 8px 20px;
-            border-radius: 30px;
+            padding: 8px 16px;
+            border-radius: 6px; /* Hap yerine daha ciddi köşeli yapı */
             font-size: 13px;
-            font-weight: 800;
+            font-weight: 700;
             letter-spacing: 0.5px;
             text-transform: uppercase;
-            color: white;
-            background: #333;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.5s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            transition: all 0.3s ease;
         }
         
-        .live-dot {
-            width: 8px; height: 8px; background: white; border-radius: 50%;
-            animation: pulse 1.5s infinite; display: none;
+        /* Kapalı Durum (Gri) */
+        .badge-closed {
+            background: #2a2e39;
+            color: #888;
+            border: 1px solid #363c4e;
         }
-        .market-badge.active .live-dot { display: block; }
 
-        /* ROZET RENKLERİ */
-        .badge-sydney { background: linear-gradient(135deg, #F9A825, #FBC02D); box-shadow: 0 0 15px rgba(249, 168, 37, 0.4); border: 1px solid #FBC02D; }
-        .badge-tokyo { background: linear-gradient(135deg, #0097A7, #00BCD4); box-shadow: 0 0 15px rgba(0, 188, 212, 0.4); border: 1px solid #00BCD4; }
-        .badge-london { background: linear-gradient(135deg, #1565C0, #2196F3); box-shadow: 0 0 15px rgba(33, 150, 243, 0.4); border: 1px solid #2196F3; }
-        .badge-newyork { background: linear-gradient(135deg, #E65100, #FF9800); box-shadow: 0 0 15px rgba(255, 152, 0, 0.4); border: 1px solid #FF9800; }
-        /* Özel Overlap Renkleri */
-        .badge-asia { background: linear-gradient(135deg, #00838F, #00ACC1); box-shadow: 0 0 15px rgba(0, 172, 193, 0.5); border: 1px solid #00ACC1; } /* Sydney + Tokyo */
-        .badge-overlap { background: linear-gradient(135deg, #6200EA, #7C4DFF); box-shadow: 0 0 20px rgba(124, 77, 255, 0.6); border: 1px solid #7C4DFF; } /* London + NY */
-        
-        .badge-closed { background: #2c2c2c; color: #777; border: 1px solid #444; }
+        /* Açık Durum (Finans Yeşili - Sabit Renk) */
+        .badge-open {
+            background: rgba(8, 153, 129, 0.15); /* Şeffaf Yeşil Zemin */
+            color: #089981; /* TradingView Yeşili Yazı */
+            border: 1px solid #089981;
+            box-shadow: 0 0 15px rgba(8, 153, 129, 0.1);
+        }
+
+        .live-dot {
+            width: 8px; height: 8px; 
+            background: #089981; /* Yeşil Nokta */
+            border-radius: 50%;
+            animation: pulse 2s infinite; display: none;
+            box-shadow: 0 0 5px #089981;
+        }
+        .badge-open .live-dot { display: block; }
 
         /* SAAT */
         .live-clock {
-            font-size: 28px; font-weight: 800; color: #fff;
-            font-variant-numeric: tabular-nums; letter-spacing: 1px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            font-size: 26px; font-weight: 800; color: #d1d4dc;
+            font-variant-numeric: tabular-nums;
         }
 
-        /* TIMELINE */
+        /* TIMELINE - Kalın ve Mat */
         .timeline-container {
             position: relative;
-            height: 100px;
+            height: 120px; /* Daha yüksek */
             background: #202020;
-            border-radius: 16px;
+            border-radius: 8px;
             margin-bottom: 20px;
-            border: 1px solid #333;
+            border: 1px solid #2a2e39;
             overflow: hidden;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
         }
 
         .grid-lines {
@@ -84,68 +86,74 @@
             pointer-events: none;
         }
         .grid-section {
-            flex: 1; border-right: 1px dashed rgba(255,255,255,0.05); position: relative;
+            flex: 1; border-right: 1px dashed #363c4e; position: relative;
         }
         .grid-label {
-            position: absolute; bottom: 6px; right: -15px; font-size: 10px; color: #555; font-weight: bold;
+            position: absolute; bottom: 4px; right: -18px; font-size: 10px; color: #666; font-weight: 600;
         }
 
         .track-wrapper {
-            position: relative; width: 100%; height: 100%; top: 12px;
-        }
-        .session-bar {
-            position: absolute; height: 10px; border-radius: 10px;
-            font-size: 9px; font-weight: 800; color: rgba(255,255,255,0.9);
-            display: flex; align-items: center; padding-left: 0; justify-content: center;
-            opacity: 0.25; filter: grayscale(80%);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; width: 100%; height: 100%; top: 10px;
         }
         
+        /* Kalınlaşmış, İsimli Barlar */
+        .session-bar {
+            position: absolute; 
+            height: 20px; /* KALINLAŞTI */
+            border-radius: 4px;
+            font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+            display: flex; align-items: center; padding-left: 10px;
+            
+            /* Pasif Durum: Koyu Gri/Mat */
+            background: #333;
+            color: #777;
+            border: 1px solid #444;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+        
+        /* Aktif Durum: Mat Profesyonel Renkler */
         .bar-active {
-            opacity: 1; filter: grayscale(0%); height: 14px;
-            z-index: 5; box-shadow: 0 0 12px currentColor;
+            opacity: 1; height: 22px; z-index: 5; color: #fff; border: none;
         }
 
-        .bar-sydney { background: linear-gradient(90deg, #FFD700, #FBC02D); color: #FBC02D; top: 5px; }
-        .bar-tokyo { background: linear-gradient(90deg, #00E5FF, #00BCD4); color: #00BCD4; top: 25px; }
-        .bar-london { background: linear-gradient(90deg, #2979FF, #1565C0); color: #2979FF; top: 45px; }
-        .bar-newyork { background: linear-gradient(90deg, #FF9100, #E65100); color: #FF9100; top: 65px; }
+        /* Mat Renk Paleti */
+        .bar-sydney.bar-active { background: #CFA700; } /* Mat Altın */
+        .bar-tokyo.bar-active { background: #008C99; }  /* Mat Cam Göbeği */
+        .bar-london.bar-active { background: #1E4F9F; } /* Mat Koyu Mavi */
+        .bar-newyork.bar-active { background: #D65A00; } /* Mat Yanık Turuncu */
 
         .cursor {
-            position: absolute; top: 0; bottom: 0; width: 2px;
-            background: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.8);
-            z-index: 20; transition: left 1s linear;
-        }
-        .cursor-head {
-            position: absolute; top: 0; left: -5px; width: 12px; height: 8px;
-            background: #fff; border-radius: 0 0 12px 12px;
+            position: absolute; top: 0; bottom: 0; width: 1px;
+            background: #d1d4dc; z-index: 20; transition: left 1s linear;
         }
 
-        /* KARTLAR */
+        /* KARTLAR - Yapıyı Koruyoruz */
         .cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .card {
-            background: #252525; border-radius: 12px; padding: 15px; position: relative;
-            border-left: 4px solid #444; transition: all 0.3s ease;
+            background: #252525; border-radius: 8px; padding: 15px; position: relative;
+            border-left: 4px solid #363c4e; transition: all 0.3s ease;
             display: flex; flex-direction: column; justify-content: space-between;
         }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .city-name { font-size: 14px; font-weight: 800; color: #e0e0e0; letter-spacing: 0.5px; }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #444; }
-        .time-range { font-size: 11px; color: #777; margin-bottom: 5px; }
+        .city-name { font-size: 14px; font-weight: 700; color: #e0e0e0; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #363c4e; }
+        .time-range { font-size: 11px; color: #888; margin-bottom: 8px; font-weight: 500;}
         .countdown { font-size: 12px; font-weight: 600; }
         
         .card.active { background: #2a2e39; }
-        .card.active .status-dot { background: #00ff00; box-shadow: 0 0 8px #00ff00; }
+        .card.active .status-dot { background: #089981; box-shadow: 0 0 5px #089981; }
         
-        .card.active.sydney { border-left-color: #FBC02D; }
-        .card.active.tokyo { border-left-color: #00BCD4; }
-        .card.active.london { border-left-color: #2979FF; }
-        .card.active.newyork { border-left-color: #FF9800; }
+        /* Kart Kenar Renkleri (Mat) */
+        .card.active.sydney { border-left-color: #CFA700; }
+        .card.active.tokyo { border-left-color: #008C99; }
+        .card.active.london { border-left-color: #1E4F9F; }
+        .card.active.newyork { border-left-color: #D65A00; }
 
-        .text-green { color: #00E676; }
-        .text-red { color: #FF5252; }
+        .text-green { color: #089981; }
+        .text-red { color: #f23645; }
 
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        @keyframes pulse { 0% { opacity: 1; box-shadow: 0 0 0 0 rgba(8, 153, 129, 0.4); } 70% { opacity: 1; box-shadow: 0 0 0 6px rgba(8, 153, 129, 0); } 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(8, 153, 129, 0); } }
 
     </style>
 </head>
@@ -168,13 +176,13 @@
         </div>
 
         <div class="track-wrapper">
-            <div id="bar-sydney" class="session-bar bar-sydney" style="left: 4.16%; width: 37.5%;"></div>
-            <div id="bar-tokyo" class="session-bar bar-tokyo" style="left: 12.5%; width: 37.5%;"></div>
-            <div id="bar-london" class="session-bar bar-london" style="left: 41.66%; width: 37.5%;"></div>
-            <div id="bar-newyork" class="session-bar bar-newyork" style="left: 66.66%; width: 33.33%;"></div>
+            <div id="bar-sydney" class="session-bar bar-sydney" style="left: 4.16%; width: 37.5%;">SYD</div>
+            <div id="bar-tokyo" class="session-bar bar-tokyo" style="left: 12.5%; width: 37.5%; top: 28px;">TOK</div>
+            <div id="bar-london" class="session-bar bar-london" style="left: 41.66%; width: 37.5%; top: 56px;">LONDRA</div>
+            <div id="bar-newyork" class="session-bar bar-newyork" style="left: 66.66%; width: 33.33%; top: 84px;">NY</div>
         </div>
 
-        <div class="cursor" id="cursor"><div class="cursor-head"></div></div>
+        <div class="cursor" id="cursor"></div>
     </div>
 
     <div class="cards-grid" id="cards-container"></div>
@@ -193,7 +201,6 @@
             const m = now.getMinutes();
             const s = now.getSeconds();
 
-            // Saat ve İmleç
             document.getElementById('clock').innerText = 
                 `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 
@@ -214,22 +221,19 @@
                 const bar = document.getElementById(`bar-${sess.id}`);
                 if (isOpen) {
                     bar.classList.add('bar-active');
-                    activeSessions.push(sess.id); // Sadece ID'leri saklıyoruz
+                    activeSessions.push(sess.id);
                 } else {
                     bar.classList.remove('bar-active');
                 }
 
-                // Kart Oluşturma
                 let timerText = "", timerClass = "";
                 if(isOpen) {
-                    let end = sess.end;
-                    let diffH = end - h - 1; let diffM = 60 - m;
+                    let end = sess.end; let diffH = end - h - 1; let diffM = 60 - m;
                     if(diffH < 0) diffH += 24;
                     timerText = `Kapanışa: ${diffH}s ${diffM}dk`;
                     timerClass = "text-green";
                 } else {
-                    let start = sess.start;
-                    let diffH = start - h - 1; let diffM = 60 - m;
+                    let start = sess.start; let diffH = start - h - 1; let diffM = 60 - m;
                     if(diffH < 0) diffH += 24;
                     timerText = `Açılışa: ${diffH}s ${diffM}dk`;
                     timerClass = "text-red";
@@ -245,10 +249,12 @@
                 container.appendChild(card);
             });
 
-            // --- HEADER MANTIĞI (ÖNCELİK SIRALAMASI) ---
+            // --- HEADER MANTIĞI (GÜNCELLENDİ) ---
             const badge = document.getElementById('dynamic-badge');
             const badgeText = document.getElementById('badge-text');
-            badge.className = 'market-badge active'; // Varsayılan aktif (Live dot görünsün diye)
+            
+            // Varsayılan olarak "Açık" stilini uygula, metni aşağıda belirleyeceğiz
+            badge.className = 'market-badge badge-open'; 
 
             const isSyd = activeSessions.includes('sydney');
             const isTok = activeSessions.includes('tokyo');
@@ -257,37 +263,15 @@
 
             if (activeSessions.length === 0) {
                 badgeText.innerText = "PİYASALAR KAPALI";
-                badge.className = 'market-badge badge-closed';
+                badge.className = 'market-badge badge-closed'; // Kapalıysa gri yap
             } 
-            // 1. En Yüksek Öncelik: London & New York Overlap
-            else if (isLon && isNy) {
-                badgeText.innerText = "LONDON & NEW YORK";
-                badge.classList.add('badge-overlap');
-            }
-            // 2. Londra Açıksa (Tokyo ile kesişse bile Londra yazar)
-            else if (isLon) {
-                badgeText.innerText = "LONDON OPEN";
-                badge.classList.add('badge-london');
-            }
-            // 3. New York (Tek Başına)
-            else if (isNy) {
-                badgeText.innerText = "NEW YORK OPEN";
-                badge.classList.add('badge-newyork');
-            }
-            // 4. Asya Seansı (Sydney + Tokyo Birlikteyse)
-            else if (isSyd && isTok) {
-                badgeText.innerText = "ASIA SESSION";
-                badge.classList.add('badge-asia');
-            }
-            // 5. Tekil Asya Seansları
-            else if (isTok) {
-                badgeText.innerText = "TOKYO OPEN";
-                badge.classList.add('badge-tokyo');
-            }
-            else if (isSyd) {
-                badgeText.innerText = "SYDNEY OPEN";
-                badge.classList.add('badge-sydney');
-            }
+            // Metin Mantığı (Renk hep yeşil kalacak)
+            else if (isLon && isNy) badgeText.innerText = "LONDON & NEW YORK";
+            else if (isLon) badgeText.innerText = "LONDON OPEN";
+            else if (isNy) badgeText.innerText = "NEW YORK OPEN";
+            else if (isSyd && isTok) badgeText.innerText = "ASIA SESSION";
+            else if (isTok) badgeText.innerText = "TOKYO OPEN";
+            else if (isSyd) badgeText.innerText = "SYDNEY OPEN";
         }
 
         setInterval(update, 1000);
