@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Pro Trade Assistant</title>
+<title>Trade Calculator</title>
 <style>
     /* RESET & TEMEL */
     ::-webkit-scrollbar { display: none; }
@@ -191,13 +191,13 @@
 
 <div class="terminal-card">
     <div class="header">
-        <span class="title">TRADE ASSISTANT</span>
+        <span class="title">TRADE CALCULATOR</span>
         <div style="width:6px; height:6px; background:#333; border-radius:50%;" id="statusDot"></div>
     </div>
 
     <div class="grid-row">
         <div>
-            <label>VARLIK</label>
+            <label>PARİTE</label>
             <select id="parity" onchange="calc(); saveSettings();">
                 <option value="eurusd">EUR/USD</option>
                 <option value="gbpusd">GBP/USD</option>
@@ -227,7 +227,7 @@
             <div class="input-helper"></div> 
         </div>
         <div>
-            <label>STOP</label>
+            <label>STOP (SL)</label>
             <input type="number" id="stop" placeholder="0.00000" onkeyup="calc()">
             <div id="distHelper" class="input-helper">--</div>
         </div>
