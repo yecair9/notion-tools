@@ -3,194 +3,275 @@
 <head>
 <meta charset="UTF-8">
 <style>
-    /* GENEL AYARLAR */
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
+    /* RESET & TEMEL */
+    ::-webkit-scrollbar { display: none; }
+    * { box-sizing: border-box; outline: none; }
 
     body {
-        background-color: #191919;
-        color: #e0e0e0;
-        /* Yüksekliği 100vh yapıp ortalamak yerine akışına bıraktık */
-        padding: 10px; 
-        overflow: hidden; /* Kaydırma çubuğunu zorla gizle */
+        margin: 0; padding: 0;
+        background-color: #191919; /* Notion arka planı */
+        color: #cfcfcf;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", monospace;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
     }
 
-    /* KAPSAYICI KUTU */
-    .calculator-card {
+    /* ANA KART */
+    .terminal-card {
         background-color: #202020;
         width: 100%;
-        /* Max-width kaldırdık, Notion sütununa tam otursun */
-        padding: 15px; /* Boşluğu 30px'ten 15px'e düşürdük */
-        border-radius: 8px;
-        border: 1px solid #333;
+        height: 100%; /* Tam yükseklik */
+        padding: 15px;
+        border: 1px solid #2a2a2a;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
-    h2 {
-        font-size: 14px; /* Küçültüldü */
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #888;
-        margin-bottom: 15px; /* Azaltıldı */
-        text-align: center;
+    /* BAŞLIK ALANI */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         border-bottom: 1px solid #333;
-        padding-bottom: 8px;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
     }
 
-    /* FORM ELEMANLARI */
+    .title {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: #666;
+    }
+
+    .status-dot {
+        width: 6px; height: 6px;
+        background-color: #2ecc71;
+        border-radius: 50%;
+        box-shadow: 0 0 5px #2ecc71;
+    }
+
+    /* GRID DÜZENİ (Daha kompakt) */
+    .grid-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
     .input-group {
-        margin-bottom: 10px; /* Azaltıldı */
+        display: flex;
+        flex-direction: column;
     }
 
     label {
-        display: block;
-        font-size: 11px; /* Küçültüldü */
-        color: #888;
-        margin-bottom: 3px;
-    }
-
-    select, input {
-        width: 100%;
-        background-color: #2d2d2d;
-        border: 1px solid #333;
-        color: #fff;
-        padding: 8px 10px; /* Input içi boşluk azaltıldı */
-        border-radius: 4px;
-        font-size: 13px;
-        outline: none;
-        transition: 0.2s;
-    }
-
-    select:focus, input:focus {
-        border-color: #4ea8de;
-        background-color: #333;
-    }
-
-    /* HESAPLA BUTONU */
-    button {
-        width: 100%;
-        padding: 10px; /* Buton küçüldü */
-        margin-top: 5px;
-        background: linear-gradient(90deg, #4ea8de, #5e60ce);
-        border: none;
-        border-radius: 4px;
-        color: white;
-        font-size: 13px;
-        font-weight: bold;
-        cursor: pointer;
-        letter-spacing: 1px;
-    }
-
-    button:hover {
-        opacity: 0.9;
-    }
-
-    /* SONUÇ ALANI */
-    .result-box {
-        margin-top: 15px;
-        text-align: center;
-        padding: 10px; /* Azaltıldı */
-        background-color: #1a1a1a;
-        border-radius: 6px;
-        border: 1px dashed #444;
-    }
-
-    .result-label {
         font-size: 10px;
-        color: #666;
-        text-transform: uppercase;
+        color: #555;
+        margin-bottom: 4px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    /* INPUT STİLLERİ (Terminal Havası) */
+    input, select {
+        background-color: #141414;
+        border: 1px solid #333;
+        color: #e0e0e0;
+        padding: 8px 10px;
+        font-size: 13px;
+        font-family: 'Roboto Mono', monospace; /* Sayılar için monospace */
+        border-radius: 4px;
+        transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus {
+        border-color: #4a4a4a;
+        background-color: #1a1a1a;
+    }
+
+    /* SONUÇ EKRANI */
+    .result-panel {
+        background-color: #161616;
+        border: 1px solid #2a2a2a;
+        border-radius: 6px;
+        padding: 15px;
+        text-align: center;
+        position: relative;
+        flex-grow: 1; /* Kalan boşluğu doldur */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-top: 5px;
     }
 
     .result-value {
-        font-size: 28px; /* Çok büyük font küçültüldü */
+        font-size: 36px;
         font-weight: 700;
+        font-family: 'Roboto Mono', monospace;
         color: #fff;
-        margin: 2px 0;
+        line-height: 1;
+        letter-spacing: -1px;
     }
 
-    .trade-direction {
+    .lot-label {
         font-size: 10px;
-        padding: 2px 6px;
-        border-radius: 3px;
-        display: inline-block;
-        font-weight: bold;
-        opacity: 0;
+        color: #555;
+        margin-top: 5px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
     }
 
-    .long { color: #2ecc71; background: rgba(46, 204, 113, 0.1); opacity: 1; }
-    .short { color: #e74c3c; background: rgba(231, 76, 60, 0.1); opacity: 1; }
+    /* DETAY BİLGİSİ (Alt kısım) */
+    .trade-info {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 15px;
+        padding-top: 10px;
+        border-top: 1px dashed #333;
+        font-size: 11px;
+        font-family: 'Roboto Mono', monospace;
+    }
+
+    .info-item { color: #666; }
+    .info-val { color: #999; font-weight: bold; }
+
+    /* RENK SINIFLARI (Dinamik Değişim İçin) */
+    .accent-neutral { color: #fff; border-color: #333; }
+    
+    /* Long (Yeşil) */
+    .accent-long { 
+        color: #2ecc71 !important; 
+        text-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
+    }
+    .border-long { border-color: rgba(46, 204, 113, 0.3) !important; }
+
+    /* Short (Kırmızı) */
+    .accent-short { 
+        color: #e74c3c !important; 
+        text-shadow: 0 0 15px rgba(231, 76, 60, 0.2);
+    }
+    .border-short { border-color: rgba(231, 76, 60, 0.3) !important; }
 
 </style>
 </head>
 <body>
 
-<div class="calculator-card">
-    <h2>Position Size</h2> <div class="input-group">
-        <label>PARİTE</label>
-        <select id="parity">
-            <option value="forex">EURUSD / GBPUSD</option>
-            <option value="gold">XAUUSD (GOLD)</option>
-            <option value="silver">XAGUSD (SILVER)</option>
-        </select>
+<div class="terminal-card">
+    <div class="header">
+        <span class="title">POS. SIZE CALCULATOR</span>
+        <div class="status-dot"></div>
     </div>
 
-    <div class="input-group">
-        <label>RİSK ($)</label>
-        <input type="number" id="risk" placeholder="50" step="any">
-    </div>
-
-    <div style="display: flex; gap: 8px;">
-        <div class="input-group" style="flex: 1;">
-            <label>GİRİŞ</label>
-            <input type="number" id="entry" placeholder="Fiyat" step="any">
+    <div class="grid-row">
+        <div class="input-group">
+            <label>SYMBOL</label>
+            <select id="parity" onchange="calc()">
+                <option value="forex">EUR/GBP</option>
+                <option value="gold">XAU/USD</option>
+                <option value="indices">US30/NAS</option>
+                <option value="silver">XAG/USD</option>
+            </select>
         </div>
-        <div class="input-group" style="flex: 1;">
+        <div class="input-group">
+            <label>RISK ($)</label>
+            <input type="number" id="risk" placeholder="50" onkeyup="calc()">
+        </div>
+    </div>
+
+    <div class="grid-row">
+        <div class="input-group">
+            <label>ENTRY</label>
+            <input type="number" id="entry" placeholder="Price" onkeyup="calc()">
+        </div>
+        <div class="input-group">
             <label>STOP</label>
-            <input type="number" id="stop" placeholder="Fiyat" step="any">
+            <input type="number" id="stop" placeholder="Price" onkeyup="calc()">
         </div>
     </div>
 
-    <button onclick="calculateLot()">HESAPLA</button>
+    <div class="result-panel" id="resultPanel">
+        <div class="result-value accent-neutral" id="result">0.00</div>
+        <div class="lot-label">LOT SIZE</div>
 
-    <div class="result-box">
-        <div class="result-label">LOT MİKTARI</div>
-        <div class="result-value" id="result">0.00</div>
-        <div id="direction" class="trade-direction">...</div>
+        <div class="trade-info">
+            <div>
+                <span class="info-item">DIST:</span>
+                <span class="info-val" id="distVal">0</span>
+            </div>
+            <div>
+                <span class="info-item">DIR:</span>
+                <span class="info-val" id="dirVal">--</span>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    function calculateLot() {
-        const parityType = document.getElementById('parity').value;
+    function calc() {
+        const parity = document.getElementById('parity').value;
         const risk = parseFloat(document.getElementById('risk').value);
         const entry = parseFloat(document.getElementById('entry').value);
         const stop = parseFloat(document.getElementById('stop').value);
+        
+        // UI Elementleri
+        const resEl = document.getElementById('result');
+        const distEl = document.getElementById('distVal');
+        const dirEl = document.getElementById('dirVal');
+        const panelEl = document.getElementById('resultPanel');
 
-        if (isNaN(risk) || isNaN(entry) || isNaN(stop) || entry === stop) {
-            // Alert yerine inputları kırmızı yakabiliriz ama basit kalsın
-            document.getElementById('result').innerText = "---";
+        // Reset
+        resEl.className = "result-value accent-neutral";
+        panelEl.className = "result-panel";
+        dirEl.style.color = "#999";
+
+        if (!risk || !entry || !stop || entry === stop) {
+            resEl.innerText = "0.00";
+            distEl.innerText = "0";
+            dirEl.innerText = "--";
             return;
         }
 
-        let contractSize = 100000;
-        if (parityType === 'gold') contractSize = 100;
-        if (parityType === 'silver') contractSize = 5000;
+        // Contract Size Logic
+        let cSize = 100000; // Forex default
+        if (parity === 'gold') cSize = 100;
+        if (parity === 'silver') cSize = 5000;
+        if (parity === 'indices') cSize = 1;
 
-        const priceDiff = Math.abs(entry - stop);
-        const lotSize = risk / (priceDiff * contractSize);
+        // Hesaplama
+        const diff = Math.abs(entry - stop);
+        const lot = risk / (diff * cSize);
 
-        document.getElementById('result').innerText = lotSize.toFixed(2);
+        // Sonuç Yazdırma
+        resEl.innerText = lot.toFixed(2);
 
-        const directionBadge = document.getElementById('direction');
+        // Mesafe Gösterimi (Pips/Points)
+        let distDisplay = diff;
+        if (parity === 'forex') distDisplay = (diff * 10000).toFixed(1) + " pips";
+        else if (parity === 'gold') distDisplay = (diff * 10).toFixed(1) + " pts";
+        else distDisplay = diff.toFixed(1);
+        
+        distEl.innerText = distDisplay;
+
+        // Yön ve Renklendirme Mantığı
         if (entry > stop) {
-            directionBadge.innerText = "LONG";
-            directionBadge.className = "trade-direction long";
+            // LONG
+            dirEl.innerText = "LONG ▲";
+            dirEl.style.color = "#2ecc71";
+            resEl.className = "result-value accent-long";
+            panelEl.classList.add("border-long");
         } else {
-            directionBadge.innerText = "SHORT";
-            directionBadge.className = "trade-direction short";
+            // SHORT
+            dirEl.innerText = "SHORT ▼";
+            dirEl.style.color = "#e74c3c";
+            resEl.className = "result-value accent-short";
+            panelEl.classList.add("border-short");
         }
     }
 </script>
