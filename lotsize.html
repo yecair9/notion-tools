@@ -12,7 +12,7 @@
         margin: 0; padding: 0;
         background-color: #191919;
         color: #e0e0e0;
-        /* Sessions bar fontunun aynısı: Temiz, Modern, Sistem Fontu */
+        /* Sessions bar font ailesi */
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Inter", sans-serif;
         height: 100vh;
         display: flex;
@@ -26,7 +26,7 @@
         background-color: #202020;
         width: 100%;
         height: 100%;
-        padding: 12px; /* Kenar boşlukları biraz kısıldı */
+        padding: 12px;
         border: 1px solid #2a2a2a;
         display: flex;
         flex-direction: column;
@@ -46,7 +46,7 @@
 
     .title {
         font-size: 11px;
-        font-weight: 800; /* Sessions bar gibi kalın */
+        font-weight: 800;
         letter-spacing: 0.5px;
         color: #777;
         text-transform: uppercase;
@@ -63,9 +63,9 @@
     label {
         display: block;
         font-size: 10px;
-        color: #666; /* Biraz daha belirgin gri */
+        color: #666;
         margin-bottom: 4px;
-        font-weight: 700; /* Kalın başlıklar */
+        font-weight: 700;
         letter-spacing: 0.5px;
         text-transform: uppercase;
     }
@@ -81,7 +81,7 @@
         font-weight: 600;
         border-radius: 4px;
         transition: all 0.2s;
-        font-family: inherit; /* Sayı fontu da aynı olsun */
+        font-family: inherit;
     }
 
     input:focus, select:focus {
@@ -89,7 +89,7 @@
         background-color: #1a1a1a;
     }
 
-    /* Placeholder Rengi (Çok silik) */
+    /* Placeholder Rengi */
     ::placeholder {
         color: #333;
         font-weight: 400;
@@ -110,7 +110,7 @@
         background-color: #161616;
         border: 1px solid #2a2a2a;
         border-radius: 6px;
-        padding: 10px 10px 15px 10px; /* Üst boşluk az, alt biraz fazla */
+        padding: 10px 10px 15px 10px;
         margin-top: auto;
         position: relative;
     }
@@ -120,12 +120,12 @@
         justify-content: center;
         align-items: center;
         gap: 10px;
-        margin-bottom: 15px; /* Alt kısımla mesafe */
+        margin-bottom: 15px;
         margin-top: 5px;
     }
 
     .result-value {
-        font-size: 42px; /* Rakam daha büyük */
+        font-size: 42px;
         font-weight: 800;
         color: #fff;
         line-height: 1;
@@ -148,7 +148,7 @@
     }
     .copy-btn:hover { border-color: #555; color: #fff; }
 
-    /* İSTATİSTİKLER (Büyütüldü ve Okunaklı Yapıldı) */
+    /* İSTATİSTİKLER */
     .stats-grid {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
@@ -170,8 +170,8 @@
     }
     
     .stat-val { 
-        font-size: 14px; /* Font Büyütüldü */
-        font-weight: 800; /* Kalınlaştırıldı */
+        font-size: 14px;
+        font-weight: 800;
         color: #ccc; 
     }
 
@@ -187,7 +187,7 @@
 
 <div class="terminal-card">
     <div class="header">
-        <span class="title">POSITION SIZE</span>
+        <span class="title">TRADE CALCULATOR</span>
         <div style="width:6px; height:6px; background:#333; border-radius:50%;" id="statusDot"></div>
     </div>
 
@@ -195,9 +195,12 @@
         <div>
             <label>VARLIK (ASSET)</label>
             <select id="parity" onchange="calc()">
-                <option value="gold">XAU/USD (GOLD)</option> <option value="forex">EUR/USD, GBP/USD</option>
-                <option value="indices">US30 / NASDAQ</option>
+                <option value="eurusd">EUR/USD</option>
+                <option value="gbpusd">GBP/USD</option>
+                <option value="gold">XAU/USD (GOLD)</option>
                 <option value="silver">XAG/USD (SILVER)</option>
+                <option value="btcusd">BTC/USD</option>
+                <option value="ethusd">ETH/USD</option>
             </select>
         </div>
         <div>
@@ -209,17 +212,17 @@
     <div class="grid-row">
         <div>
             <label>GİRİŞ</label>
-            <input type="number" id="entry" placeholder="0.00" onkeyup="calc()">
+            <input type="number" id="entry" placeholder="0.00000" onkeyup="calc()">
         </div>
         <div>
             <label>STOP</label>
-            <input type="number" id="stop" placeholder="0.00" onkeyup="calc()">
+            <input type="number" id="stop" placeholder="0.00000" onkeyup="calc()">
         </div>
     </div>
 
     <div style="margin-bottom: 10px;">
         <label>HEDEF / TP (OPSİYONEL)</label>
-        <input type="number" id="tp" placeholder="0.00" onkeyup="calc()">
+        <input type="number" id="tp" placeholder="0.00000" onkeyup="calc()">
     </div>
 
     <div class="result-panel" id="resultPanel">
@@ -282,10 +285,11 @@
         }
 
         // --- LOT HESAPLAMA ---
-        let cSize = 100000;
+        let cSize = 100000; // Varsayılan Forex (EURUSD, GBPUSD)
+        
         if (parity === 'gold') cSize = 100;
         if (parity === 'silver') cSize = 5000;
-        if (parity === 'indices') cSize = 1;
+        if (parity === 'btcusd' || parity === 'ethusd') cSize = 1; // Standart CFD Crypto Lot (1 Coin)
 
         const stopDist = Math.abs(entry - stop);
         const lot = risk / (stopDist * cSize);
@@ -321,7 +325,6 @@
             profitEl.innerText = "$" + potentialProfit;
             profitEl.style.color = "#fff";
         } else {
-            // TP yoksa yön açık kalsın
             statsGrid.style.opacity = "0.8";
             rrEl.innerText = "--";
             profitEl.innerText = "--";
