@@ -2,16 +2,17 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
+<title>Pro Trade Calculator</title>
 <style>
-    /* RESET & TEMEL */
+    /* RESET & TEMEL AYARLAR */
     ::-webkit-scrollbar { display: none; }
-    * { box-sizing: border-box; outline: none; }
+    * { box-sizing: border-box; outline: none; user-select: none; }
 
     body {
         margin: 0; padding: 0;
-        background-color: #191919; /* Notion arka planı */
+        background-color: #191919;
         color: #cfcfcf;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", monospace;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
         height: 100vh;
         display: flex;
         align-items: center;
@@ -23,40 +24,33 @@
     .terminal-card {
         background-color: #202020;
         width: 100%;
-        height: 100%; /* Tam yükseklik */
+        height: 100%;
         padding: 15px;
         border: 1px solid #2a2a2a;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        border-radius: 4px;
     }
 
-    /* BAŞLIK ALANI */
+    /* BAŞLIK */
     .header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         border-bottom: 1px solid #333;
-        padding-bottom: 10px;
-        margin-bottom: 15px;
+        padding-bottom: 8px;
+        margin-bottom: 12px;
     }
 
     .title {
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 1px;
-        text-transform: uppercase;
         color: #666;
     }
 
-    .status-dot {
-        width: 6px; height: 6px;
-        background-color: #2ecc71;
-        border-radius: 50%;
-        box-shadow: 0 0 5px #2ecc71;
-    }
-
-    /* GRID DÜZENİ (Daha kompakt) */
+    /* GRID SİSTEMİ */
     .grid-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -64,54 +58,64 @@
         margin-bottom: 10px;
     }
 
-    .input-group {
-        display: flex;
-        flex-direction: column;
-    }
-
     label {
-        font-size: 10px;
+        display: block;
+        font-size: 9px;
         color: #555;
         margin-bottom: 4px;
         font-weight: 600;
         letter-spacing: 0.5px;
+        text-transform: uppercase;
     }
 
-    /* INPUT STİLLERİ (Terminal Havası) */
+    /* INPUTLAR */
     input, select {
+        width: 100%;
         background-color: #141414;
         border: 1px solid #333;
         color: #e0e0e0;
-        padding: 8px 10px;
+        padding: 10px;
         font-size: 13px;
-        font-family: 'Roboto Mono', monospace; /* Sayılar için monospace */
+        font-family: 'Roboto Mono', monospace;
         border-radius: 4px;
-        transition: border-color 0.2s;
+        transition: all 0.2s;
     }
 
     input:focus, select:focus {
-        border-color: #4a4a4a;
+        border-color: #555;
         background-color: #1a1a1a;
     }
 
-    /* SONUÇ EKRANI */
+    /* TP ALANI (Biraz daha silik dursun ki opsiyonel olduğu anlaşılsın) */
+    #tp {
+        border-color: #2a2a2a;
+        color: #999;
+    }
+    #tp:focus {
+        border-color: #555;
+        color: #fff;
+    }
+
+    /* SONUÇ PANELİ */
     .result-panel {
         background-color: #161616;
         border: 1px solid #2a2a2a;
         border-radius: 6px;
-        padding: 15px;
-        text-align: center;
+        padding: 12px;
+        margin-top: auto;
         position: relative;
-        flex-grow: 1; /* Kalan boşluğu doldur */
+    }
+
+    .lot-wrapper {
         display: flex;
-        flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin-top: 5px;
+        gap: 10px;
+        margin-bottom: 8px;
     }
 
     .result-value {
-        font-size: 36px;
+        font-size: 38px; /* Lot yazısı büyütüldü */
         font-weight: 700;
         font-family: 'Roboto Mono', monospace;
         color: #fff;
@@ -119,44 +123,40 @@
         letter-spacing: -1px;
     }
 
-    .lot-label {
-        font-size: 10px;
+    /* Kopyala butonu */
+    .copy-btn {
+        background: transparent;
+        border: 1px solid #333;
         color: #555;
-        margin-top: 5px;
-        text-transform: uppercase;
-        letter-spacing: 2px;
+        cursor: pointer;
+        padding: 5px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        transition: 0.2s;
+        height: fit-content;
     }
+    .copy-btn:hover { border-color: #777; color: #aaa; }
 
-    /* DETAY BİLGİSİ (Alt kısım) */
-    .trade-info {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
-        margin-top: 15px;
+    /* İSTATİSTİKLER */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 5px;
+        border-top: 1px dashed #2a2a2a;
         padding-top: 10px;
-        border-top: 1px dashed #333;
-        font-size: 11px;
-        font-family: 'Roboto Mono', monospace;
+        margin-top: 5px;
+        opacity: 0.5; /* Başlangıçta sönük */
+        transition: opacity 0.3s;
     }
 
-    .info-item { color: #666; }
-    .info-val { color: #999; font-weight: bold; }
+    .stat-box { text-align: center; }
+    .stat-label { font-size: 8px; color: #444; margin-bottom: 3px; }
+    .stat-val { font-size: 11px; font-weight: bold; color: #888; font-family: 'Roboto Mono', monospace; }
 
-    /* RENK SINIFLARI (Dinamik Değişim İçin) */
-    .accent-neutral { color: #fff; border-color: #333; }
-    
-    /* Long (Yeşil) */
-    .accent-long { 
-        color: #2ecc71 !important; 
-        text-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
-    }
+    /* RENKLER */
+    .accent-long { color: #2ecc71 !important; }
+    .accent-short { color: #e74c3c !important; }
     .border-long { border-color: rgba(46, 204, 113, 0.3) !important; }
-
-    /* Short (Kırmızı) */
-    .accent-short { 
-        color: #e74c3c !important; 
-        text-shadow: 0 0 15px rgba(231, 76, 60, 0.2);
-    }
     .border-short { border-color: rgba(231, 76, 60, 0.3) !important; }
 
 </style>
@@ -165,13 +165,13 @@
 
 <div class="terminal-card">
     <div class="header">
-        <span class="title">POS. SIZE CALCULATOR</span>
-        <div class="status-dot"></div>
+        <span class="title">TRADE CALCULATOR</span>
+        <div style="width:6px; height:6px; background:#333; border-radius:50%;" id="statusDot"></div>
     </div>
 
     <div class="grid-row">
-        <div class="input-group">
-            <label>SYMBOL</label>
+        <div>
+            <label>Symbol</label>
             <select id="parity" onchange="calc()">
                 <option value="forex">EUR/GBP</option>
                 <option value="gold">XAU/USD</option>
@@ -179,35 +179,48 @@
                 <option value="silver">XAG/USD</option>
             </select>
         </div>
-        <div class="input-group">
-            <label>RISK ($)</label>
-            <input type="number" id="risk" placeholder="50" onkeyup="calc()">
+        <div>
+            <label>Risk ($)</label>
+            <input type="number" id="risk" placeholder="Risk Tutarı" onkeyup="calc()">
         </div>
     </div>
 
     <div class="grid-row">
-        <div class="input-group">
-            <label>ENTRY</label>
-            <input type="number" id="entry" placeholder="Price" onkeyup="calc()">
+        <div>
+            <label>Entry</label>
+            <input type="number" id="entry" placeholder="Giriş Fiyatı" onkeyup="calc()">
         </div>
-        <div class="input-group">
-            <label>STOP</label>
-            <input type="number" id="stop" placeholder="Price" onkeyup="calc()">
+        <div>
+            <label>Stop Loss</label>
+            <input type="number" id="stop" placeholder="Stop Fiyatı" onkeyup="calc()">
         </div>
     </div>
 
-    <div class="result-panel" id="resultPanel">
-        <div class="result-value accent-neutral" id="result">0.00</div>
-        <div class="lot-label">LOT SIZE</div>
+    <div style="margin-bottom: 10px;">
+        <label>Take Profit (Opsiyonel)</label>
+        <input type="number" id="tp" placeholder="Hedef Fiyat (Boş kalabilir)" onkeyup="calc()">
+    </div>
 
-        <div class="trade-info">
-            <div>
-                <span class="info-item">DIST:</span>
-                <span class="info-val" id="distVal">0</span>
+    <div class="result-panel" id="resultPanel">
+        <div class="lot-wrapper">
+            <div class="result-value" id="result">0.00</div>
+            <button class="copy-btn" onclick="copyLot()" title="Kopyala">
+               COPY
+            </button>
+        </div>
+        
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-box">
+                <div class="stat-label">YÖN</div>
+                <div class="stat-val" id="dirVal">--</div>
             </div>
-            <div>
-                <span class="info-item">DIR:</span>
-                <span class="info-val" id="dirVal">--</span>
+            <div class="stat-box">
+                <div class="stat-label">R:R</div>
+                <div class="stat-val" id="rrVal">--</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">KAZANÇ</div>
+                <div class="stat-val" id="profitVal">--</div>
             </div>
         </div>
     </div>
@@ -219,60 +232,92 @@
         const risk = parseFloat(document.getElementById('risk').value);
         const entry = parseFloat(document.getElementById('entry').value);
         const stop = parseFloat(document.getElementById('stop').value);
+        const tp = parseFloat(document.getElementById('tp').value);
         
-        // UI Elementleri
+        // UI
         const resEl = document.getElementById('result');
-        const distEl = document.getElementById('distVal');
         const dirEl = document.getElementById('dirVal');
+        const rrEl = document.getElementById('rrVal');
+        const profitEl = document.getElementById('profitVal');
         const panelEl = document.getElementById('resultPanel');
+        const statsGrid = document.getElementById('statsGrid');
+        const dot = document.getElementById('statusDot');
 
-        // Reset
-        resEl.className = "result-value accent-neutral";
+        // Temizle
+        resEl.style.color = "#fff";
         panelEl.className = "result-panel";
-        dirEl.style.color = "#999";
-
+        dirEl.style.color = "#888";
+        
+        // Zorunlu alan kontrolü (TP buraya dahil DEĞİL)
         if (!risk || !entry || !stop || entry === stop) {
             resEl.innerText = "0.00";
-            distEl.innerText = "0";
             dirEl.innerText = "--";
+            rrEl.innerText = "--";
+            profitEl.innerText = "--";
+            statsGrid.style.opacity = "0.5";
+            dot.style.background = "#333";
+            dot.style.boxShadow = "none";
             return;
         }
 
-        // Contract Size Logic
-        let cSize = 100000; // Forex default
+        // --- LOT HESAPLAMA (TP'den bağımsız) ---
+        let cSize = 100000;
         if (parity === 'gold') cSize = 100;
         if (parity === 'silver') cSize = 5000;
         if (parity === 'indices') cSize = 1;
 
-        // Hesaplama
-        const diff = Math.abs(entry - stop);
-        const lot = risk / (diff * cSize);
-
-        // Sonuç Yazdırma
+        const stopDist = Math.abs(entry - stop);
+        const lot = risk / (stopDist * cSize);
         resEl.innerText = lot.toFixed(2);
 
-        // Mesafe Gösterimi (Pips/Points)
-        let distDisplay = diff;
-        if (parity === 'forex') distDisplay = (diff * 10000).toFixed(1) + " pips";
-        else if (parity === 'gold') distDisplay = (diff * 10).toFixed(1) + " pts";
-        else distDisplay = diff.toFixed(1);
+        // Yön Belirleme (TP'den bağımsız)
+        const isLong = entry > stop; // Entry stop'tan büyükse fiyat yukarıdadır, stop aşağıdadır -> LONG
+        // DÜZELTME: Entry > Stop ise Stop aşağıdadır -> LONG
+        // Entry < Stop ise Stop yukarıdadır -> SHORT
         
-        distEl.innerText = distDisplay;
-
-        // Yön ve Renklendirme Mantığı
-        if (entry > stop) {
-            // LONG
-            dirEl.innerText = "LONG ▲";
+        if (isLong) {
+            dirEl.innerText = "LONG";
             dirEl.style.color = "#2ecc71";
             resEl.className = "result-value accent-long";
             panelEl.classList.add("border-long");
+            dot.style.background = "#2ecc71";
+            dot.style.boxShadow = "0 0 5px #2ecc71";
         } else {
-            // SHORT
-            dirEl.innerText = "SHORT ▼";
+            dirEl.innerText = "SHORT";
             dirEl.style.color = "#e74c3c";
             resEl.className = "result-value accent-short";
             panelEl.classList.add("border-short");
+            dot.style.background = "#e74c3c";
+            dot.style.boxShadow = "0 0 5px #e74c3c";
         }
+
+        // --- İSTATİSTİKLER (TP Varsa Aktifleşir) ---
+        if (tp && tp !== entry) {
+            statsGrid.style.opacity = "1"; // Parlat
+            const tpDist = Math.abs(entry - tp);
+            const rr = (tpDist / stopDist).toFixed(2);
+            rrEl.innerText = "1:" + rr;
+
+            const potentialProfit = (risk * rr).toFixed(0);
+            profitEl.innerText = "$" + potentialProfit;
+            profitEl.style.color = "#fff";
+        } else {
+            // TP yoksa sadece Yön açık kalsın, diğerleri sönük
+            statsGrid.style.opacity = "0.8";
+            rrEl.innerText = "--";
+            profitEl.innerText = "--";
+        }
+    }
+
+    function copyLot() {
+        const val = document.getElementById('result').innerText;
+        if(val === "0.00") return;
+        navigator.clipboard.writeText(val).then(() => {
+            const btn = document.querySelector('.copy-btn');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = "✓";
+            setTimeout(() => { btn.innerHTML = originalHTML; }, 1000);
+        });
     }
 </script>
 
