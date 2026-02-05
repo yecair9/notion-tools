@@ -13,26 +13,29 @@
         background-color: #191919;
         color: #e0e0e0;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Inter", sans-serif;
-        height: 100vh;
+        /* DEĞİŞİKLİK: Notion uyumu için min-height yapıldı */
+        min-height: 100vh;
         display: flex;
-        align-items: center; /* Dikey ortalama */
+        align-items: center; 
         justify-content: center;
         overflow: hidden;
-        /* Seçim engeli kaldırıldı */
     }
 
     /* KART YAPISI */
     .terminal-card {
         background-color: #202020;
         width: 100%;
-        height: 100%;
+        /* DEĞİŞİKLİK: 100% yerine auto ve min-height daha sağlıklı */
+        height: 100%; 
+        min-height: 480px; 
         padding: 12px;
         border: 1px solid #2a2a2a;
         display: flex;
         flex-direction: column;
-        justify-content: flex-start; /* Elemanları yukarı yasla */
-        gap: 8px; /* Elemanlar arası sabit, küçük boşluk */
+        justify-content: flex-start; 
+        gap: 8px; 
         border-radius: 6px;
+        position: relative;
     }
 
     /* HEADER */
@@ -86,6 +89,8 @@
         transition: all 0.2s;
         font-family: inherit;
         cursor: text;
+        /* DEĞİŞİKLİK: Notion dokunmatik/tıklama iyileştirmesi */
+        touch-action: manipulation;
     }
     input:focus, select:focus {
         border-color: #555;
@@ -138,7 +143,6 @@
         border: 1px solid #2a2a2a;
         border-radius: 6px;
         padding: 8px 10px; 
-        /* GÜNCELLEME: Boşluk artırıldı (5px -> 30px) */
         margin-top: 60px; 
     }
 
@@ -207,7 +211,7 @@
 </head>
 <body>
 
-<div class="terminal-card">
+<div class="terminal-card" onclick="this.focus()">
     <div class="header">
         <span class="title">TRADE CALCULATOR</span>
         <div style="width:6px; height:6px; background:#333; border-radius:50%;" id="statusDot"></div>
