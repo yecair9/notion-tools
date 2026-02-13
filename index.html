@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notion Tools Link Generator</title>
+    <title>Notion Tools</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -94,7 +94,7 @@
 
     <div class="tool-card">
         <div class="tool-header">
-            <span class="tool-name">📉 Lot Size Calculator</span>
+            <span class="tool-name">Lot Size Calculator</span>
             <a href="lotsize.html" target="_blank" class="open-link">Aç ↗</a>
         </div>
         <div class="input-group">
@@ -105,7 +105,7 @@
 
     <div class="tool-card">
         <div class="tool-header">
-            <span class="tool-name">📰 News & Calendar</span>
+            <span class="tool-name"> News & Calendar</span>
             <a href="news.html" target="_blank" class="open-link">Aç ↗</a>
         </div>
         <div class="input-group">
@@ -116,7 +116,7 @@
 
     <div class="tool-card">
         <div class="tool-header">
-            <span class="tool-name">🕒 Market Sessions</span>
+            <span class="tool-name"> Sessions</span>
             <a href="sessions.html" target="_blank" class="open-link">Aç ↗</a>
         </div>
         <div class="input-group">
@@ -127,7 +127,7 @@
 
     <div class="tool-card">
         <div class="tool-header">
-            <span class="tool-name">📊 Price Ticker</span>
+            <span class="tool-name"> Ticker Tape</span>
             <a href="ticker.html" target="_blank" class="open-link">Aç ↗</a>
         </div>
         <div class="input-group">
@@ -137,37 +137,30 @@
     </div>
 
     <script>
-        // Sayfa yüklendiğinde mevcut ana dizini (base URL) bulur
         function getBaseUrl() {
             let url = window.location.href;
-            // Eğer URL 'index.html' ile bitiyorsa onu kaldırır, sadece klasör yolunu alır
             url = url.substring(0, url.lastIndexOf('/') + 1);
             return url;
         }
 
         const baseUrl = getBaseUrl();
 
-        // Input kutularına tam linkleri yerleştirir
         document.getElementById('url-lotsize').value = baseUrl + 'lotsize.html';
         document.getElementById('url-news').value = baseUrl + 'news.html';
         document.getElementById('url-sessions').value = baseUrl + 'sessions.html';
         document.getElementById('url-ticker').value = baseUrl + 'ticker.html';
 
-        // Kopyalama Fonksiyonu
         function copyToClipboard(elementId, btnElement) {
             var copyText = document.getElementById(elementId);
-            
-            // Metni seç ve kopyala
+       
             copyText.select();
             copyText.setSelectionRange(0, 99999); // Mobil uyumluluk için
             navigator.clipboard.writeText(copyText.value);
 
-            // Buton görsel geri bildirimi
             let originalText = btnElement.innerText;
             btnElement.innerText = "✓";
             btnElement.classList.add("copied");
 
-            // 2 saniye sonra butonu eski haline getir
             setTimeout(function() {
                 btnElement.innerText = originalText;
                 btnElement.classList.remove("copied");
